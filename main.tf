@@ -1,4 +1,3 @@
-
 locals {
   LB = [for line in split("\n", file("LB.txt")) : {
     LB_name = split(":", line)[0]
