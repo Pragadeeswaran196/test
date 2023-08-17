@@ -1,5 +1,5 @@
 locals {
-  LB = [for line in split("\n", file("https://github.com/Pragadeeswaran196/test/blob/main/LB.txt")) : {
+  LB = [for line in split("\n", file("LB.txt")) : {
     LB_name = split(":", line)[0]
     Threshold = split(":", line)[1]
     sustain = split(":", line)[2]
