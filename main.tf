@@ -1,9 +1,9 @@
 locals {
   LB = [for line in split("\n", file("LB.txt")) : {
-    LB_name = split(":", line)[0]
-    Threshold = split(":", line)[1]
-    sustain = split(":", line)[2]
-  }]
+    LB_name = length(parts) > 0 ? parts[0] : null
+    Threshold = length(parts) > 1 ? parts[1] : null
+    sustain = length(parts) > 2 ? parts[2] : null
+  }if length(line) > 0]
 }
 resource "chronosphere_monitor" "critical_prod_aws_inf_elb_httpcode_elb_5xx_upper_threshold" {
   name                   = "test-jenkins-Sample-test | Critical | PROD | AWS INF | ELB |  httpcode_elb_5_xx Count breached Upper Threshold"
