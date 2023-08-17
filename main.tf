@@ -6,8 +6,8 @@ locals {
   }]
 }
 resource "chronosphere_monitor" "critical_prod_aws_inf_elb_httpcode_elb_5xx_upper_threshold" {
-  name                   = "Sample-test | Critical | PROD | AWS INF | ELB |  httpcode_elb_5_xx Count breached Upper Threshold"
-  slug                   = "critical-prod-aws-inf-elb-httpcode-elb-5xx-upper-threshold"
+  name                   = "test-jenkins-Sample-test | Critical | PROD | AWS INF | ELB |  httpcode_elb_5_xx Count breached Upper Threshold"
+  slug                   = "test-jenkins-critical-prod-aws-inf-elb-httpcode-elb-5xx-upper-threshold"
   bucket_id              = "techops-prod-alerts"
   notification_policy_id = "techops-prod-alerts"
   query {
