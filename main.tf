@@ -10,7 +10,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization_alarm" {
   namespace           = "AWS/RDS"
   period              = "300" # 5 minutes
   statistic           = "Average"
-  threshold           = "75"  
+  threshold           = "80"  
   alarm_description  = "Alarm when CPU utilization is above 75% for 2 consecutive periods"
   
   dimensions = {
