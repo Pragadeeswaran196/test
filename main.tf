@@ -1,54 +1,22 @@
-locals {
-  LB = [for line in split("\n", file("LB.txt")) : {
-    LB_name = length(parts) > 0 ? parts[0] : null
-    Threshold = length(parts) > 1 ? parts[1] : null
-    sustain = length(parts) > 2 ? parts[2] : null
-  }if length(line) > 0]
+provider "aws" {
+  region = "us-east-1" # Update with your desired region
 }
-resource "chronosphere_monitor" "critical_prod_aws_inf_elb_httpcode_elb_5xx_upper_threshold" {
-  name                   = "test-jenkins-Sample-test | Critical | PROD | AWS INF | ELB |  httpcode_elb_5_xx Count breached Upper Threshold"
-  slug                   = "test-jenkins-critical-prod-aws-inf-elb-httpcode-elb-5xx-upper-threshold"
-  bucket_id              = "techops-prod-alerts"
-  notification_policy_id = "techops-prod-alerts"
-  query {
-    prometheus_expr = "sum by (tag_Name,dimension_LoadBalancerName,tag_env) (aws_elb_httpcode_elb_5_xx_sum{tag_env=\"prod\"})"
-  }
-  series_conditions {
-    condition {
-      op       = "GT"
-      severity = "critical"
-      sustain  = "10m"
-      value    = 50
-    }
-    dynamic "override" {
-      for_each = { for lb in local.LB : lb.LB_name => lb }
 
-      content {
-        condition {
-          op       = "GT"
-          severity = "critical"
-          sustain  = override.value.sustain
-          value    = override.value.Threshold
-        }
+resource "aws_cloudwatch_metric_alarm" "cpu_utilization_alarm" {
+  alarm_name          = "testing-terraform-praga"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "5"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/RDS"
+  period              = "300" # 5 minutes
+  statistic           = "Average"
+  threshold           = "75"  
+  alarm_description  = "Alarm when CPU utilization is above 75% for 2 consecutive periods"
+  
+  dimensions = {
+    DBInstanceIdentifier = "ocean-service-prod" # Replace with your actual instance ID
+  }
 
-        label_matcher {
-          name  = "tag_Name"
-          type  = "EXACT"
-          value = override.value.LB_name
-        }
-      }
-    }
-  }
-  annotations = {
-    SOP = "https://fourkites.atlassian.net/wiki/spaces/TECHOPS/pages/629407987/ALB+ELB+5XX+Alert"
-  }
-  interval = "1m"
-  labels = {
-    Comp      = "Load-balancer"
-    Env       = "Prod"
-    Terraform = "True"
-  }
-  signal_grouping {
-    label_names = ["dimension_LoadBalancerName", "tag_env", "tag_Name"]
-  }
+  alarm_actions = ["arn:aws:sns:us-east-1:123456789012:MySNSTopic"] 
+  ok_actions    = ["arn:aws:sns:us-east-1:123456789012:MySNSTopic"]
 }
